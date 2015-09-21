@@ -35,6 +35,7 @@ class CollectionViewController: UICollectionViewController {
         self.collectionView?.alwaysBounceVertical = false
        
         collectionView?.collectionViewLayout = CollectionFlowLayout()
+        
         collectionView?.reloadData()
     }
     
@@ -42,13 +43,13 @@ class CollectionViewController: UICollectionViewController {
 
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         //#warning Incomplete method implementation -- Return the number of sections
-        return 51
+        return 50
     }
 
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         //#warning Incomplete method implementation -- Return the number of items in the section
-        return 51
+        return 50
     }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {

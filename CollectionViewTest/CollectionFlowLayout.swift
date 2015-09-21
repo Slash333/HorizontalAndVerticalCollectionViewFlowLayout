@@ -21,7 +21,6 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
     
     var sections: Array<Section> = Array()
     
-    
     // MARK: Properties
     
     var boundsWidth: CGFloat {
@@ -46,12 +45,12 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
         super.prepareLayout()
         
         scrollDirection = UICollectionViewScrollDirection.Horizontal
-        sectionInset = UIEdgeInsetsMake(0, 0, 0, 0)
+        sectionInset = UIEdgeInsetsMake(10, 10, 10, 10)
         headerReferenceSize = CGSizeMake(headerWidth, headerHeight)
         itemSize = CGSizeMake(cellWidth, cellHeight)
         
-        minimumLineSpacing = CGFloat(0)
-        minimumInteritemSpacing = CGFloat(0)
+        minimumLineSpacing = CGFloat(10)
+        minimumInteritemSpacing = CGFloat(20)
         
         sections.removeAll(keepCapacity: true)
         
