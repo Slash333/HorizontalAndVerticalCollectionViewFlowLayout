@@ -29,20 +29,11 @@ class CollectionViewController: UICollectionViewController {
 
         // Register cell classes
         self.collectionView!.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-        
         self.collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind:UICollectionElementKindSectionHeader , withReuseIdentifier: reuseHeaderIdentifier)
 
         // Do any additional setup after loading the view.
         self.collectionView?.alwaysBounceVertical = false
        
-        
-//        if view.bounds.height > view.bounds.width {
-//            dateFlowLayout.scrollDirection = UICollectionViewScrollDirection.Vertical
-//        } else {
-//            dateFlowLayout.scrollDirection = UICollectionViewScrollDirection.Horizontal
-//        }
-        
-        
         collectionView?.collectionViewLayout = CollectionFlowLayout()
         collectionView?.reloadData()
     }
@@ -51,13 +42,13 @@ class CollectionViewController: UICollectionViewController {
 
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         //#warning Incomplete method implementation -- Return the number of sections
-        return 5
+        return 51
     }
 
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         //#warning Incomplete method implementation -- Return the number of items in the section
-        return 50
+        return 51
     }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -72,7 +63,7 @@ class CollectionViewController: UICollectionViewController {
         if let label = cell.viewWithTag(1) as? UILabel {
             label.text = "\(indexPath.row)" + " - \(indexPath.section)"
         } else {
-            var label = UILabel(frame: CGRectMake(3, 5, 45, 30))
+            var label = UILabel(frame: CGRectMake(3, 5, 60, 30))
             label.text = "\(indexPath.row)" + " - \(indexPath.section)"
             label.tag = 1
             cell.addSubview(label)

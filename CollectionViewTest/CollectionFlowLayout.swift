@@ -10,8 +10,8 @@ import Foundation
 
 // MARK: constants
 
-let cellHeight = CGFloat(100)
-let cellWidth = CGFloat(100)
+let cellHeight = CGFloat(70)
+let cellWidth = CGFloat(70)
 let headerHeight = CGFloat(100)
 let headerWidth = CGFloat(100)
 
@@ -46,9 +46,8 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
         super.prepareLayout()
         
         scrollDirection = UICollectionViewScrollDirection.Horizontal
-        sectionInset = UIEdgeInsetsMake(20, 70, 10, 10)
-        //headerReferenceSize = CGSizeMake(headerWidth, headerHeight)
-        
+        sectionInset = UIEdgeInsetsMake(0, 0, 0, 0)
+        headerReferenceSize = CGSizeMake(headerWidth, headerHeight)
         itemSize = CGSizeMake(cellWidth, cellHeight)
         
         minimumLineSpacing = CGFloat(0)
@@ -85,9 +84,6 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
             var cells = section.cellsInRect(rect)
             for cell in cells {
                 let cellIndexPath = NSIndexPath(forRow: cell.index, inSection: section.index)
-                
-                NSLog("cellIndexPath row = \(cellIndexPath.row) section = \(cellIndexPath.section)")
-                
                 let cellLayoutAttribute = layoutAttributesForItemAtIndexPath(cellIndexPath)
                 
                 cellLayoutAttribute.frame = cell.frame

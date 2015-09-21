@@ -30,6 +30,9 @@ class Section {
         return sectionInset.left + sectionInset.right
     }
     
+    var verticalLineSpacing: CGFloat = 0
+    var horizontalLineSpacing: CGFloat = 0
+    
     func makeCalculation(collectionFlowLayout: CollectionFlowLayout) {
         
         // sectionInset
@@ -44,6 +47,10 @@ class Section {
         if itemsCount < rowCount {
             rowCount = itemsCount
         }
+        
+        // verticalLineSpacing
+        
+        verticalLineSpacing = (contentHeight - cellHeight * CGFloat(rowCount)) / CGFloat(rowCount + 1)
         
         // col
         colCount = itemsCount / rowCount + (itemsCount % rowCount == 0 ? 0 : 1)
@@ -71,17 +78,12 @@ class Section {
         let firstCell = firstCellInRect(rect)
         let lastCell = lastCellInRect(rect)
         
-        //NSLog("section.index = \(index) firstCell.index = \(firstCell.index) && lastCell.index = \(lastCell.index)")
-        
-        let firstIndex = firstCell.index
-        let lastIndex = lastCell.index
-        
         result.append(firstCell)
         
-        for var i = firstIndex + 1; i <= lastIndex - 1; ++i {
+        for var i = firstCell.index + 1; i <= lastCell.index - 1; ++i {
             let previousCell = result.last!
+            let cell = Cell()
             
-            var cell = Cell()
             cell.index = previousCell.index + 1
             
             if previousCell.row + 1 < rowCount{
@@ -89,7 +91,7 @@ class Section {
                 cell.col = previousCell.col
                 
                 var cellFrame = previousCell.frame
-                cellFrame.origin.y += cellHeight
+                cellFrame.origin.y += cellHeight + verticalLineSpacing
                 cell.frame = cellFrame
                 
             } else {
@@ -98,7 +100,7 @@ class Section {
                 
                 var cellFrame = previousCell.frame
                 cellFrame.origin.x += cellWidth
-                cellFrame.origin.y = sectionInset.top
+                cellFrame.origin.y = sectionInset.top + verticalLineSpacing
                 cell.frame = cellFrame
             }
             
@@ -118,7 +120,7 @@ class Section {
         
         cell.frame = CGRectMake(
             frame.origin.x + sectionInset.left,
-            frame.origin.y + sectionInset.top,
+            frame.origin.y + sectionInset.top + verticalLineSpacing,
             cellWidth,
             cellHeight)
         
@@ -144,7 +146,7 @@ class Section {
         
         cell.frame = CGRectMake(
             frame.origin.x + sectionInset.left + CGFloat(cell.col) * cellWidth,
-            frame.origin.y + sectionInset.top + CGFloat(cell.row) * cellHeight,
+            frame.origin.y + sectionInset.top + verticalLineSpacing + CGFloat(cell.row) * (cellHeight + verticalLineSpacing),
             cellWidth,
             cellHeight)
         
@@ -152,19 +154,17 @@ class Section {
             if CGRectIntersectsRect(rect, cell.frame) {
                 cell.col = col
                 cell.index = rowCount * cell.col + cell.row
-                
-                if cell.index > itemsCount - 1 {
-                    cell.index = itemsCount - 1
-                    
-                    //cell.col = cell.index / rowCount
-                    cell.row = cell.index % rowCount
-                    cell.frame.origin.y =  frame.origin.y + sectionInset.top + CGFloat(cell.row) * cellHeight
-                }
-                
                 break
             }
             
             cell.frame.origin.x -= cellWidth
+        }
+        
+        if cell.index >= itemsCount {
+            cell.index = itemsCount - 1
+            cell.row = cell.index % rowCount
+            cell.frame.origin.y =
+                frame.origin.y + sectionInset.top + verticalLineSpacing + CGFloat(cell.row) * (cellHeight + verticalLineSpacing)
         }
         
         return cell
