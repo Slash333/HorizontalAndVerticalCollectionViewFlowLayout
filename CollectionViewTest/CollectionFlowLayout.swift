@@ -43,7 +43,12 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
     override func prepareLayout() {
         super.prepareLayout()
         
-        scrollDirection = UICollectionViewScrollDirection.Horizontal
+        if boundsWidth > boundsHeight {
+            scrollDirection = UICollectionViewScrollDirection.Horizontal
+        } else {
+            scrollDirection = UICollectionViewScrollDirection.Vertical
+        }
+        
         sectionInset = UIEdgeInsetsMake(0, 5, 0, 5)
         headerReferenceSize = CGSizeMake(headerWidth, headerHeight)
         itemSize = CGSizeMake(cellWidth, cellHeight)
@@ -64,12 +69,21 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
     }
     
     override func collectionViewContentSize() -> CGSize {
-        var width: CGFloat = 0
-        for section in sections {
-            width += section.frame.width
+        if scrollDirection == .Horizontal {
+            var width: CGFloat = 0
+            for section in sections {
+                width += section.frame.width
+            }
+            
+            return CGSizeMake(width, collectionView!.bounds.height)
+        } else {
+            var height: CGFloat = 0
+            for section in sections {
+                height += section.frame.height
+            }
+            
+            return CGSizeMake(collectionView!.bounds.width, height)
         }
-        
-        return CGSizeMake(width, collectionView!.bounds.height)
     }
     
     override func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
@@ -77,7 +91,7 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
         var result: Array<UICollectionViewLayoutAttributes> = Array()
         
         sectionsInRect = sectionsInRect(rect)
-        let xOffset = xContentOffset
+        
         for section in sectionsInRect {
             
             // header
@@ -89,26 +103,53 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
             let firstCell = section.firstCell()
             let lastCell = section.lastCell()
             
-            let leftByFirstItem = CGRectGetMinX(firstCell.frame) - sectionInset.left
-            let rightByLastItem = CGRectGetMaxX(lastCell.frame) + sectionInset.right
-            
-            let width = min(rightByLastItem - leftByFirstItem, boundsWidth)
-            let left = max(xOffset, leftByFirstItem) - max(xOffset + width - rightByLastItem, 0)
-            
-            headerLayoutAttribute.frame = CGRectMake(left, 0, width, headerHeight)
-            result.append(headerLayoutAttribute)
-            
-            // cells
-            let cells = section.cellsInRect(rect)
-            
-            for cell in cells {
-                let cellIndexPath = NSIndexPath(forRow: cell.index, inSection: section.index)
-                let cellLayoutAttribute = UICollectionViewLayoutAttributes(forCellWithIndexPath: cellIndexPath)
-                //let cellLayoutAttribute = layoutAttributesForItemAtIndexPath(cellIndexPath)
+            if scrollDirection == .Horizontal {
+                let xOffset = xContentOffset
+                let leftByFirstItem = CGRectGetMinX(firstCell.frame) - sectionInset.left
+                let rightByLastItem = CGRectGetMaxX(lastCell.frame) + sectionInset.right
                 
-                cellLayoutAttribute.frame = cell.frame
-                result.append(cellLayoutAttribute)
+                let width = min(rightByLastItem - leftByFirstItem, boundsWidth)
+                let left = max(xOffset, leftByFirstItem) - max(xOffset + width - rightByLastItem, 0)
+                
+                headerLayoutAttribute.frame = CGRectMake(left, 0, width, headerHeight)
+                headerLayoutAttribute.zIndex = 1024
+                result.append(headerLayoutAttribute)
+                
+                // cells
+                let cells = section.cellsInRect(rect)
+                
+                for cell in cells {
+                    let cellIndexPath = NSIndexPath(forRow: cell.index, inSection: section.index)
+                    let cellLayoutAttribute = UICollectionViewLayoutAttributes(forCellWithIndexPath: cellIndexPath)
+                    //let cellLayoutAttribute = layoutAttributesForItemAtIndexPath(cellIndexPath)
+                    
+                    cellLayoutAttribute.frame = cell.frame
+                    result.append(cellLayoutAttribute)
+                }
+            } else { // Vertical
+                let yOffset = yContentOffset
+                let topByFirstItem = CGRectGetMinY(firstCell.frame) - sectionInset.top
+                let bottomByLastItem = CGRectGetMaxY(lastCell.frame) + sectionInset.bottom
+                
+                let top = max(yOffset, topByFirstItem) - max(yOffset + headerHeight - bottomByLastItem, 0)
+                
+                headerLayoutAttribute.frame = CGRectMake(0, top, boundsWidth, headerHeight)
+                headerLayoutAttribute.zIndex = 1024
+                result.append(headerLayoutAttribute)
+                
+                // cells
+                let cells = section.cellsInRect(rect)
+                
+                for cell in cells {
+                    let cellIndexPath = NSIndexPath(forRow: cell.index, inSection: section.index)
+                    let cellLayoutAttribute = UICollectionViewLayoutAttributes(forCellWithIndexPath: cellIndexPath)
+                    //let cellLayoutAttribute = layoutAttributesForItemAtIndexPath(cellIndexPath)
+                    
+                    cellLayoutAttribute.frame = cell.frame
+                    result.append(cellLayoutAttribute)
+                }
             }
+            
         }
         
         return result

@@ -18,7 +18,6 @@ class CollectionViewController: UICollectionViewController {
         super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
         
         collectionView?.collectionViewLayout.invalidateLayout()
-        collectionView?.reloadData()
     }
     
     override func viewDidLoad() {
@@ -35,8 +34,7 @@ class CollectionViewController: UICollectionViewController {
         //self.collectionView?.alwaysBounceVertical = false
        
         collectionView?.collectionViewLayout = CollectionFlowLayout()
-        
-        collectionView?.reloadData()
+        collectionView?.collectionViewLayout.invalidateLayout()
     }
     
     // MARK: UICollectionViewDataSource
