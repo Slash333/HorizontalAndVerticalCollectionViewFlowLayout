@@ -32,7 +32,7 @@ class CollectionViewController: UICollectionViewController {
         self.collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind:UICollectionElementKindSectionHeader , withReuseIdentifier: reuseHeaderIdentifier)
 
         // Do any additional setup after loading the view.
-        self.collectionView?.alwaysBounceVertical = false
+        //self.collectionView?.alwaysBounceVertical = false
        
         collectionView?.collectionViewLayout = CollectionFlowLayout()
         
@@ -43,17 +43,17 @@ class CollectionViewController: UICollectionViewController {
 
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         //#warning Incomplete method implementation -- Return the number of sections
-        return 50
+        return 2
     }
 
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         //#warning Incomplete method implementation -- Return the number of items in the section
-        return 50
+        return 70
     }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! UICollectionViewCell
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) 
     
         // Configure the cell
     
@@ -64,7 +64,7 @@ class CollectionViewController: UICollectionViewController {
         if let label = cell.viewWithTag(1) as? UILabel {
             label.text = "\(indexPath.row)" + " - \(indexPath.section)"
         } else {
-            var label = UILabel(frame: CGRectMake(3, 5, 60, 30))
+            let label = UILabel(frame: CGRectMake(3, 5, 60, 30))
             label.text = "\(indexPath.row)" + " - \(indexPath.section)"
             label.tag = 1
             cell.addSubview(label)
@@ -74,7 +74,7 @@ class CollectionViewController: UICollectionViewController {
     }
     
     override func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionHeader, withReuseIdentifier: reuseHeaderIdentifier, forIndexPath: indexPath) as! UICollectionReusableView
+        let header = collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionHeader, withReuseIdentifier: reuseHeaderIdentifier, forIndexPath: indexPath) 
         
         header.backgroundColor = UIColor.redColor()
         header.layer.borderWidth = 2
@@ -83,7 +83,7 @@ class CollectionViewController: UICollectionViewController {
         if let label = header.viewWithTag(1) as? UILabel {
             label.text = "\(indexPath.section)"
         } else {
-            var label = UILabel(frame: CGRectMake(5, 5, 30, 30))
+            let label = UILabel(frame: CGRectMake(5, 5, 30, 30))
             label.text = "\(indexPath.section)"
             label.tag = 1
             header.addSubview(label)

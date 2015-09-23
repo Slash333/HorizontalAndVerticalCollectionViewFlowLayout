@@ -21,7 +21,7 @@ public class HorizontalCollectionViewLayout : UICollectionViewLayout {
         return CGSize(width: CGFloat(width), height: boundsHeight)
     }
     
-    public override func layoutAttributesForElementsInRect(rect: CGRect) -> [AnyObject]? {
+    public override func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         var allAttributes = [UICollectionViewLayoutAttributes]()
         
         for (var i = 0; i < cellCount; ++i) {
@@ -33,7 +33,7 @@ public class HorizontalCollectionViewLayout : UICollectionViewLayout {
         return allAttributes
     }
     
-    public override func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes! {
+    public override func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
         return createLayoutAttributesForCellAtIndexPath(indexPath)
     }
     

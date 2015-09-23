@@ -8,18 +8,17 @@
 
 import Foundation
 
-// MARK: constants
-
-let cellHeight = CGFloat(70)
-let cellWidth = CGFloat(70)
-let headerHeight = CGFloat(100)
-let headerWidth = CGFloat(100)
-
-// MARK: CollectionFlowLayout
-
 class CollectionFlowLayout: UICollectionViewFlowLayout {
     
+    // MARK: constants
+    
+    let cellHeight = CGFloat(70)
+    let cellWidth = CGFloat(70)
+    let headerHeight = CGFloat(70)
+    let headerWidth = CGFloat(70)
+    
     var sections: Array<Section> = Array()
+    var sectionsInRect: Array<Section> = Array()
     
     // MARK: Properties
     
@@ -45,17 +44,17 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
         super.prepareLayout()
         
         scrollDirection = UICollectionViewScrollDirection.Horizontal
-        sectionInset = UIEdgeInsetsMake(10, 10, 10, 10)
+        sectionInset = UIEdgeInsetsMake(0, 5, 0, 5)
         headerReferenceSize = CGSizeMake(headerWidth, headerHeight)
         itemSize = CGSizeMake(cellWidth, cellHeight)
         
-        minimumLineSpacing = CGFloat(10)
-        minimumInteritemSpacing = CGFloat(20)
+        minimumLineSpacing = CGFloat(5)
+        minimumInteritemSpacing = CGFloat(5)
         
         sections.removeAll(keepCapacity: true)
         
         for var i = 0; i < collectionView!.numberOfSections(); ++i {
-            var section = Section()
+            let section = Section()
             section.index = i
             section.itemsCount = collectionView!.numberOfItemsInSection(i)
             sections.append(section)
@@ -73,41 +72,57 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
         return CGSizeMake(width, collectionView!.bounds.height)
     }
     
-    override func layoutAttributesForElementsInRect(rect: CGRect) -> [AnyObject]? {
-
-        var result: Array<AnyObject> = Array()
+    override func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         
-        let sections = sectionsInRect(rect)
+        var result: Array<UICollectionViewLayoutAttributes> = Array()
         
-        for section in sections {
-            var cells = section.cellsInRect(rect)
+        sectionsInRect = sectionsInRect(rect)
+        let xOffset = xContentOffset
+        for section in sectionsInRect {
+            
+            // header
+            let headerIndexPath = NSIndexPath(index: section.index)
+            
+            let headerLayoutAttribute = UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withIndexPath: headerIndexPath)
+            //let headerLayoutAttribute = layoutAttributesForSupplementaryViewOfKind(UICollectionElementKindSectionHeader, atIndexPath: headerIndexPath)
+            
+            let firstCell = section.firstCell()
+            let lastCell = section.lastCell()
+            
+            let leftByFirstItem = CGRectGetMinX(firstCell.frame) - sectionInset.left
+            let rightByLastItem = CGRectGetMaxX(lastCell.frame) + sectionInset.right
+            
+            let width = min(rightByLastItem - leftByFirstItem, boundsWidth)
+            let left = max(xOffset, leftByFirstItem) - max(xOffset + width - rightByLastItem, 0)
+            
+            headerLayoutAttribute.frame = CGRectMake(left, 0, width, headerHeight)
+            result.append(headerLayoutAttribute)
+            
+            // cells
+            let cells = section.cellsInRect(rect)
+            
             for cell in cells {
                 let cellIndexPath = NSIndexPath(forRow: cell.index, inSection: section.index)
-                let cellLayoutAttribute = layoutAttributesForItemAtIndexPath(cellIndexPath)
+                let cellLayoutAttribute = UICollectionViewLayoutAttributes(forCellWithIndexPath: cellIndexPath)
+                //let cellLayoutAttribute = layoutAttributesForItemAtIndexPath(cellIndexPath)
                 
                 cellLayoutAttribute.frame = cell.frame
                 result.append(cellLayoutAttribute)
             }
         }
         
-//        let headerIndexPath = NSIndexPath(forItem: 0, inSection: 0)
-//        let headerLayoutAttribute = layoutAttributesForSupplementaryViewOfKind(UICollectionElementKindSectionHeader, atIndexPath: headerIndexPath)
-//        result.append(headerLayoutAttribute)
-        
-        
         return result
     }
     
-    override func layoutAttributesForSupplementaryViewOfKind(elementKind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes! {
-        let layoutAttribute = super.layoutAttributesForSupplementaryViewOfKind(elementKind, atIndexPath: indexPath)
-        
-        return layoutAttribute
-    }
-    
-    override func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes! {
-        let layoutAttribute = super.layoutAttributesForItemAtIndexPath(indexPath)
-        return layoutAttribute
-    }
+//    override func layoutAttributesForSupplementaryViewOfKind(elementKind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes! {
+//        let layoutAttribute = super.layoutAttributesForSupplementaryViewOfKind(elementKind, atIndexPath: indexPath)
+//        return layoutAttribute
+//    }
+//    
+//    override func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes! {
+//        let layoutAttribute = super.layoutAttributesForItemAtIndexPath(indexPath)
+//        return layoutAttribute
+//    }
     
     override func shouldInvalidateLayoutForBoundsChange(newBounds: CGRect) -> Bool {
         return true

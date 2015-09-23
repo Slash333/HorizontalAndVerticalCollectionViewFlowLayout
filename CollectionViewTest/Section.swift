@@ -36,7 +36,17 @@ class Section {
     var minimumLineSpacing = CGFloat(0)
     var minimumInteritemSpacing = CGFloat(0)
     
+    var cellHeight = CGFloat(0)
+    var cellWidth = CGFloat(0)
+    
+    var headerHeight = CGFloat(0)
+    var headerWidth = CGFloat(0)
+    
+    var scrollDirection = UICollectionViewScrollDirection.Vertical
+    
     func makeCalculation(collectionFlowLayout: CollectionFlowLayout) {
+        // scrollDirection
+        scrollDirection = collectionFlowLayout.scrollDirection
         
         // minimumLineSpacing
         minimumLineSpacing = collectionFlowLayout.minimumLineSpacing
@@ -47,23 +57,34 @@ class Section {
         // sectionInset
         sectionInset = collectionFlowLayout.sectionInset
         
+        // headerWidth
+        headerHeight = collectionFlowLayout.headerWidth
+        
+        // headerHeight
+        headerHeight = collectionFlowLayout.headerHeight
+        
+        // cellHeight
+        cellHeight = collectionFlowLayout.cellHeight
+        
+        // cellWidth
+        cellWidth = collectionFlowLayout.cellWidth
+        
         // contentHeight
-        contentHeight = collectionFlowLayout.boundsHeight - verticalInsets
+        contentHeight = collectionFlowLayout.boundsHeight - verticalInsets - headerHeight
         
-        // row
+        // rowCount - calculate rowCount with minimumInteritemSpacing
         rowCount = Int(contentHeight / (cellHeight + minimumInteritemSpacing))
-        
-        if itemsCount < rowCount {
-            rowCount = itemsCount
-        }
+        rowCount = min(itemsCount, rowCount)
         
         // verticalLineSpacing
         
         verticalLineSpacing = (contentHeight - cellHeight * CGFloat(rowCount)) / CGFloat(rowCount + 1)
         
-        if verticalLineSpacing < minimumInteritemSpacing {
-            verticalLineSpacing = minimumInteritemSpacing
-        }
+        verticalLineSpacing = max(verticalLineSpacing, minimumInteritemSpacing)
+        
+        // rowCount - recalculate rowCount with verticalLineSpacing
+        rowCount = Int(contentHeight / (cellHeight + verticalLineSpacing))
+        rowCount = min(itemsCount, rowCount)
         
         // col
         colCount = itemsCount / rowCount + (itemsCount % rowCount == 0 ? 0 : 1)
@@ -99,22 +120,43 @@ class Section {
             
             cell.index = previousCell.index + 1
             
-            if previousCell.row + 1 < rowCount{
-                cell.row = previousCell.row + 1
-                cell.col = previousCell.col
-                
-                var cellFrame = previousCell.frame
-                cellFrame.origin.y += cellHeight + verticalLineSpacing
-                cell.frame = cellFrame
-                
+            if scrollDirection == .Horizontal {
+                if previousCell.row + 1 < rowCount{
+                    cell.row = previousCell.row + 1
+                    cell.col = previousCell.col
+                    
+                    var cellFrame = previousCell.frame
+                    cellFrame.origin.y += cellHeight + verticalLineSpacing
+                    cell.frame = cellFrame
+                    
+                } else {
+                    cell.row = 0
+                    cell.col = previousCell.col + 1
+                    
+                    var cellFrame = previousCell.frame
+                    cellFrame.origin.x += cellWidth + minimumLineSpacing
+                    cellFrame.origin.y = sectionInset.top + verticalLineSpacing + headerHeight
+                    cell.frame = cellFrame
+                }
             } else {
-                cell.row = 0
-                cell.col = previousCell.col + 1
-                
-                var cellFrame = previousCell.frame
-                cellFrame.origin.x += cellWidth + minimumLineSpacing
-                cellFrame.origin.y = sectionInset.top + verticalLineSpacing
-                cell.frame = cellFrame
+                // !!!
+                if previousCell.row + 1 < rowCount{
+                    cell.row = previousCell.row + 1
+                    cell.col = previousCell.col
+                    
+                    var cellFrame = previousCell.frame
+                    cellFrame.origin.y += cellHeight + verticalLineSpacing
+                    cell.frame = cellFrame
+                    
+                } else {
+                    cell.row = 0
+                    cell.col = previousCell.col + 1
+                    
+                    var cellFrame = previousCell.frame
+                    cellFrame.origin.x += cellWidth + minimumLineSpacing
+                    cellFrame.origin.y = sectionInset.top + verticalLineSpacing + headerHeight
+                    cell.frame = cellFrame
+                }
             }
             
             result.append(cell)
@@ -125,59 +167,111 @@ class Section {
         return result
     }
     
-    private func firstCellInRect(rect: CGRect) -> Cell {
-        
-        let x = rect.origin.x
-        
+    func firstCell() -> Cell {
         let cell = Cell()
         
-        cell.frame = CGRectMake(
-            frame.origin.x + sectionInset.left,
-            frame.origin.y + sectionInset.top + verticalLineSpacing,
-            cellWidth,
-            cellHeight)
+        if scrollDirection == .Horizontal {
+            cell.frame = CGRectMake(
+                frame.origin.x + sectionInset.left,
+                frame.origin.y + sectionInset.top + verticalLineSpacing + headerHeight,
+                cellWidth,
+                cellHeight)
+        } else {
+            // !!!
+            cell.frame = CGRectMake(
+                frame.origin.x + sectionInset.left,
+                frame.origin.y + sectionInset.top + verticalLineSpacing + headerHeight,
+                cellWidth,
+                cellHeight)
+        }
         
-        for var col = 0; col < colCount; ++col {
-            if CGRectIntersectsRect(rect, cell.frame) {
-                cell.col = col
-                cell.index = rowCount * cell.col + cell.row
-                return cell
+        return cell
+    }
+
+    
+    func firstCellInRect(rect: CGRect) -> Cell {
+        let cell = firstCell()
+        
+        if scrollDirection == .Horizontal {
+            for var col = 0; col < colCount; ++col {
+                if CGRectIntersectsRect(rect, cell.frame) {
+                    cell.col = col
+                    cell.index = rowCount * cell.col + cell.row
+                    return cell
+                }
+                
+                cell.frame.origin.x += cellWidth + minimumLineSpacing
             }
-            
-            cell.frame.origin.x += cellWidth + minimumLineSpacing
+        } else {
+            // !!!
+            for var col = 0; col < colCount; ++col {
+                if CGRectIntersectsRect(rect, cell.frame) {
+                    cell.col = col
+                    cell.index = rowCount * cell.col + cell.row
+                    return cell
+                }
+                
+                cell.frame.origin.x += cellWidth + minimumLineSpacing
+            }
         }
         
         return cell
     }
     
-    private func lastCellInRect(rect: CGRect) -> Cell {
+    func lastCell() -> Cell {
         
         let cell = Cell()
-        cell.col = colCount - 1
-        cell.row = rowCount - 1
-        cell.index = rowCount * cell.col + cell.row
+        cell.index = itemsCount - 1
         
-        cell.frame = CGRectMake(
-            frame.origin.x + sectionInset.left + CGFloat(cell.col) * (cellWidth + minimumLineSpacing),
-            frame.origin.y + sectionInset.top + verticalLineSpacing + CGFloat(cell.row) * (cellHeight + verticalLineSpacing),
-            cellWidth,
-            cellHeight)
-        
-        for var col = colCount - 1; col >= 0; --col {
-            if CGRectIntersectsRect(rect, cell.frame) {
-                cell.col = col
-                cell.index = rowCount * cell.col + cell.row
-                break
-            }
+        if scrollDirection == .Horizontal {
+            cell.col = cell.index / rowCount
+            cell.row = cell.index % rowCount
             
-            cell.frame.origin.x -= cellWidth + minimumLineSpacing
+            cell.frame = CGRectMake(
+                frame.origin.x + sectionInset.left + CGFloat(cell.col) * (cellWidth + (cell.col > 1 ? minimumLineSpacing : 0)),
+                frame.origin.y + sectionInset.top + verticalLineSpacing + headerHeight + CGFloat(cell.row) * (cellHeight + verticalLineSpacing),
+                cellWidth,
+                cellHeight)
+        } else {
+            // !!!
+            cell.col = cell.index % colCount
+            cell.row = cell.index / colCount
+            
+            cell.frame = CGRectMake(
+                frame.origin.x + sectionInset.left + CGFloat(cell.col) * (cellWidth + (cell.col > 1 ? minimumLineSpacing : 0)),
+                frame.origin.y + sectionInset.top + verticalLineSpacing + headerHeight + CGFloat(cell.row) * (cellHeight + verticalLineSpacing),
+                cellWidth,
+                cellHeight)
         }
         
-        if cell.index >= itemsCount {
-            cell.index = itemsCount - 1
-            cell.row = cell.index % rowCount
-            cell.frame.origin.y =
-                frame.origin.y + sectionInset.top + verticalLineSpacing + CGFloat(cell.row) * (cellHeight + verticalLineSpacing)
+        return cell
+    }
+    
+    func lastCellInRect(rect: CGRect) -> Cell {
+        
+        let cell = lastCell()
+        
+        if scrollDirection == .Horizontal {
+            for var col = colCount - 1; col >= 0; --col {
+                if CGRectIntersectsRect(rect, cell.frame) {
+                    cell.col = col
+                    cell.index = rowCount * cell.col + cell.row
+                    break
+                }
+                
+                cell.frame.origin.x -= cellWidth + minimumLineSpacing
+            }
+        } else {
+            // !!!
+            for var col = colCount - 1; col >= 0; --col {
+                if CGRectIntersectsRect(rect, cell.frame) {
+                    cell.col = col
+                    cell.index = rowCount * cell.col + cell.row
+                    break
+                }
+                
+                cell.frame.origin.x -= cellWidth + minimumLineSpacing
+            }
         }
         
         return cell
