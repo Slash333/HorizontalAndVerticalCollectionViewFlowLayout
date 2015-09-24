@@ -46,15 +46,15 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
         if boundsWidth > boundsHeight {
             scrollDirection = UICollectionViewScrollDirection.Horizontal
         } else {
-            scrollDirection = UICollectionViewScrollDirection.Vertical
+            scrollDirection = UICollectionViewScrollDirection.Horizontal
         }
         
-        sectionInset = UIEdgeInsetsMake(0, 5, 0, 5)
+        sectionInset = UIEdgeInsetsMake(0, 0, 0, 0)
         headerReferenceSize = CGSizeMake(headerWidth, headerHeight)
         itemSize = CGSizeMake(cellWidth, cellHeight)
         
-        minimumLineSpacing = CGFloat(5)
-        minimumInteritemSpacing = CGFloat(5)
+        minimumLineSpacing = CGFloat(10)
+        minimumInteritemSpacing = CGFloat(10)
         
         sections.removeAll(keepCapacity: true)
         
@@ -128,7 +128,7 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
                 }
             } else { // Vertical
                 let yOffset = yContentOffset
-                let topByFirstItem = CGRectGetMinY(firstCell.frame) - sectionInset.top
+                let topByFirstItem = CGRectGetMinY(firstCell.frame) - sectionInset.top - headerHeight
                 let bottomByLastItem = CGRectGetMaxY(lastCell.frame) + sectionInset.bottom
                 
                 let top = max(yOffset, topByFirstItem) - max(yOffset + headerHeight - bottomByLastItem, 0)

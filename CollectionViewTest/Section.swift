@@ -195,11 +195,19 @@ class Section {
     func firstCell() -> Cell {
         let cell = Cell()
         
-        cell.frame = CGRectMake(
-            frame.origin.x + sectionInset.left,
-            frame.origin.y + sectionInset.top + verticalLineSpacing + headerHeight,
-            cellWidth,
-            cellHeight)
+        if scrollDirection == .Horizontal {
+            cell.frame = CGRectMake(
+                frame.origin.x + sectionInset.left,
+                frame.origin.y + sectionInset.top + verticalLineSpacing + headerHeight,
+                cellWidth,
+                cellHeight)
+        } else {
+            cell.frame = CGRectMake(
+                frame.origin.x + sectionInset.left + horizontalLineSpacing,
+                frame.origin.y + sectionInset.top + headerHeight,
+                cellWidth,
+                cellHeight)
+        }
         
         return cell
     }
@@ -241,16 +249,23 @@ class Section {
         if scrollDirection == .Horizontal {
             cell.col = cell.index / rowCount
             cell.row = cell.index % rowCount
+            
+            cell.frame = CGRectMake(
+                frame.origin.x + sectionInset.left + CGFloat(cell.col) * (cellWidth + (cell.col > 1 ? horizontalLineSpacing : 0)),
+                frame.origin.y + headerHeight + sectionInset.top + verticalLineSpacing + CGFloat(cell.row) * (cellHeight + verticalLineSpacing),
+                cellWidth,
+                cellHeight)
+            
         } else {
             cell.col = cell.index % colCount
             cell.row = cell.index / colCount
+            
+            cell.frame = CGRectMake(
+                frame.origin.x + sectionInset.left + horizontalLineSpacing + CGFloat(cell.col) * (cellWidth + horizontalLineSpacing),
+                frame.origin.y + headerHeight + sectionInset.top + CGFloat(cell.row) * (cellHeight + verticalLineSpacing),
+                cellWidth,
+                cellHeight)
         }
-        
-        cell.frame = CGRectMake(
-            frame.origin.x + sectionInset.left + CGFloat(cell.col) * (cellWidth + (cell.col > 1 ? horizontalLineSpacing : 0)),
-            frame.origin.y + sectionInset.top + verticalLineSpacing + headerHeight + CGFloat(cell.row) * (cellHeight + verticalLineSpacing),
-            cellWidth,
-            cellHeight)
         
         return cell
     }
