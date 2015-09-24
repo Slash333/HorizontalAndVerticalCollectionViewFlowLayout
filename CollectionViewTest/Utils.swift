@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 class Utils {
     class func maxItemCountInDimension(dimension: CGFloat, minimumInteritemSpacing: CGFloat, itemDimension: CGFloat) -> Int {

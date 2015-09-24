@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 class CollectionFlowLayout: UICollectionViewFlowLayout {
     
@@ -100,58 +101,26 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
             
             // header
             let headerIndexPath = NSIndexPath(index: section.index)
+            let  headerLayoutAttribute = layoutAttributesForSupplementaryViewOfKind(UICollectionElementKindSectionHeader, atIndexPath: headerIndexPath)
             
-            let headerLayoutAttribute = UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withIndexPath: headerIndexPath)
-            //let headerLayoutAttribute = layoutAttributesForSupplementaryViewOfKind(UICollectionElementKindSectionHeader, atIndexPath: headerIndexPath)
+            if headerLayoutAttribute == nil {
+                continue
+            }
             
-            let firstCell = section.firstCell()
-            let lastCell = section.lastCell()
+            result.append(headerLayoutAttribute!)
             
-            if scrollDirection == .Horizontal {
-                let xOffset = xContentOffset
-                let leftByFirstItem = CGRectGetMinX(firstCell.frame) - sectionInset.left
-                let rightByLastItem = CGRectGetMaxX(lastCell.frame) + sectionInset.right
+            // cells
+            let cells = section.cellsInRect(rect)
+            
+            for cell in cells {
+                let cellIndexPath = NSIndexPath(forRow: cell.index, inSection: section.index)
+                let cellLayoutAttribute = layoutAttributesForItemAtIndexPath(cellIndexPath)
                 
-                let width = min(rightByLastItem - leftByFirstItem, boundsWidth)
-                let left = max(xOffset, leftByFirstItem) - max(xOffset + width - rightByLastItem, 0)
-                
-                headerLayoutAttribute.frame = CGRectMake(left, 0, width, headerHeight)
-                headerLayoutAttribute.zIndex = 1024
-                result.append(headerLayoutAttribute)
-                
-                // cells
-                let cells = section.cellsInRect(rect)
-                
-                for cell in cells {
-                    let cellIndexPath = NSIndexPath(forRow: cell.index, inSection: section.index)
-                    let cellLayoutAttribute = UICollectionViewLayoutAttributes(forCellWithIndexPath: cellIndexPath)
-                    //let cellLayoutAttribute = layoutAttributesForItemAtIndexPath(cellIndexPath)
-                    
-                    cellLayoutAttribute.frame = cell.frame
-                    result.append(cellLayoutAttribute)
+                if cellLayoutAttribute == nil {
+                    continue
                 }
-            } else { // Vertical
-                let yOffset = yContentOffset
-                let topByFirstItem = CGRectGetMinY(firstCell.frame) - sectionInset.top - headerHeight
-                let bottomByLastItem = CGRectGetMaxY(lastCell.frame) + sectionInset.bottom
                 
-                let top = max(yOffset, topByFirstItem) - max(yOffset + headerHeight - bottomByLastItem, 0)
-                
-                headerLayoutAttribute.frame = CGRectMake(0, top, boundsWidth, headerHeight)
-                headerLayoutAttribute.zIndex = 1024
-                result.append(headerLayoutAttribute)
-                
-                // cells
-                let cells = section.cellsInRect(rect)
-                
-                for cell in cells {
-                    let cellIndexPath = NSIndexPath(forRow: cell.index, inSection: section.index)
-                    let cellLayoutAttribute = UICollectionViewLayoutAttributes(forCellWithIndexPath: cellIndexPath)
-                    //let cellLayoutAttribute = layoutAttributesForItemAtIndexPath(cellIndexPath)
-                    
-                    cellLayoutAttribute.frame = cell.frame
-                    result.append(cellLayoutAttribute)
-                }
+                result.append(cellLayoutAttribute!)
             }
             
         }
@@ -159,15 +128,65 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
         return result
     }
     
-//    override func layoutAttributesForSupplementaryViewOfKind(elementKind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes! {
-//        let layoutAttribute = super.layoutAttributesForSupplementaryViewOfKind(elementKind, atIndexPath: indexPath)
-//        return layoutAttribute
-//    }
-//    
-//    override func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes! {
-//        let layoutAttribute = super.layoutAttributesForItemAtIndexPath(indexPath)
-//        return layoutAttribute
-//    }
+    override func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
+        let layoutAttribute = UICollectionViewLayoutAttributes(forCellWithIndexPath: indexPath)
+        
+        if indexPath.section < 0 || indexPath.section >= sections.count {
+            return nil
+        }
+        
+        let section = sections[indexPath.section]
+        
+        if section.itemsCount == 0 {
+            return nil
+        }
+        
+        let cell = section.cellAtIndex(indexPath.row)
+        layoutAttribute.frame = cell.frame
+        
+        return layoutAttribute
+    }
+    
+    override func layoutAttributesForSupplementaryViewOfKind(elementKind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
+        let layoutAttribute = UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withIndexPath: indexPath)
+        
+        if indexPath.section < 0 || indexPath.section >= sections.count {
+            return nil
+        }
+        
+        let section = sections[indexPath.section]
+        
+        if section.itemsCount == 0 {
+            return nil
+        }
+        
+        let firstCell = section.firstCell()
+        let lastCell = section.lastCell()
+        
+        if scrollDirection == .Horizontal {
+            let xOffset = xContentOffset
+            let leftByFirstItem = CGRectGetMinX(firstCell.frame) - sectionInset.left
+            let rightByLastItem = CGRectGetMaxX(lastCell.frame) + sectionInset.right
+            
+            let width = min(rightByLastItem - leftByFirstItem, boundsWidth)
+            let left = max(xOffset, leftByFirstItem) - max(xOffset + width - rightByLastItem, 0)
+            
+            layoutAttribute.frame = CGRectMake(left, 0, width, headerHeight)
+            layoutAttribute.zIndex = 1024
+            
+        } else { // Vertical
+            let yOffset = yContentOffset
+            let topByFirstItem = CGRectGetMinY(firstCell.frame) - sectionInset.top - headerHeight
+            let bottomByLastItem = CGRectGetMaxY(lastCell.frame) + sectionInset.bottom
+            
+            let top = max(yOffset, topByFirstItem) - max(yOffset + headerHeight - bottomByLastItem, 0)
+            
+            layoutAttribute.frame = CGRectMake(0, top, boundsWidth, headerHeight)
+            layoutAttribute.zIndex = 1024
+        }
+        
+        return layoutAttribute
+    }
     
     override func shouldInvalidateLayoutForBoundsChange(newBounds: CGRect) -> Bool {
         return true

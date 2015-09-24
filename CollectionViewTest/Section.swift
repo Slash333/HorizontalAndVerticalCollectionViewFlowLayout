@@ -7,20 +7,35 @@
 //
 
 import Foundation
+import UIKit
 
 class Section {
-    var itemsCount = 0
     
-    var rowCount = 0
-    var colCount = 0
+    // MARK: Private fields
+    
+    private (set) var rowCount = 0
+    private (set) var colCount = 0
+    
+    private (set) var frame = CGRectMake(0, 0, 0, 0)
+    private (set) var sectionInset = UIEdgeInsetsMake(0, 0, 0, 0)
+    
+    private (set) var contentHeight: CGFloat = 0
+    private (set) var contentWidth: CGFloat = 0
+    
+    private (set) var minimumLineSpacing = CGFloat(0)
+    private (set) var minimumInteritemSpacing = CGFloat(0)
+    
+    private (set) var cellHeight = CGFloat(0)
+    private (set) var cellWidth = CGFloat(0)
+    
+    private (set) var headerHeight = CGFloat(0)
+    
+    private (set) var scrollDirection = UICollectionViewScrollDirection.Vertical
+    
+    // MARK: Properties
     
     var index = 0
-    
-    var frame = CGRectMake(0, 0, 0, 0)
-    var sectionInset = UIEdgeInsetsMake(0, 0, 0, 0)
-    
-    var contentHeight: CGFloat = 0
-    var contentWidth: CGFloat = 0
+    var itemsCount = 0
     
     var verticalInsets: CGFloat {
         if itemsCount > 0 {
@@ -38,24 +53,12 @@ class Section {
         }
     }
     
-    var minimumLineSpacing = CGFloat(0)
-    var minimumInteritemSpacing = CGFloat(0)
-    
-    var cellHeight = CGFloat(0)
-    var cellWidth = CGFloat(0)
-    
-    var headerHeight = CGFloat(0)
-    var headerWidth = CGFloat(0)
-    
-    var scrollDirection = UICollectionViewScrollDirection.Vertical
-    
     func makeCalculation(collectionFlowLayout: CollectionFlowLayout) {
         
         scrollDirection = collectionFlowLayout.scrollDirection
         minimumLineSpacing = collectionFlowLayout.minimumLineSpacing
         minimumInteritemSpacing = collectionFlowLayout.minimumInteritemSpacing
         sectionInset = collectionFlowLayout.sectionInset
-        headerWidth = collectionFlowLayout.headerWidth
         headerHeight = collectionFlowLayout.headerHeight
         cellHeight = collectionFlowLayout.cellHeight
         cellWidth = collectionFlowLayout.cellWidth
@@ -128,6 +131,32 @@ class Section {
         }
     }
     
+    func cellAtIndex(index: Int) -> Cell {
+        let cell = Cell()
+        cell.index = index
+        
+        if scrollDirection == .Horizontal {
+            cell.col = cell.index / rowCount
+            cell.row = cell.index % rowCount
+            
+        } else {
+            cell.col = cell.index % colCount
+            cell.row = cell.index / colCount
+        }
+        
+        cell.frame = frameForCellInRow(cell.row, col: cell.col)
+        
+        return cell
+    }
+    
+    func firstCell() -> Cell {
+        return cellAtIndex(0)
+    }
+    
+    func lastCell() -> Cell {
+        return cellAtIndex(max(itemsCount - 1, 0))
+    }
+    
     func cellsInRect(rect: CGRect) -> [Cell] {
         var result: Array<Cell> = Array()
         
@@ -138,20 +167,7 @@ class Section {
         
         for var i = firstCell.index + 1; i <= lastCell.index - 1; ++i {
             let previousCell = result.last!
-            let cell = Cell()
-            
-            cell.index = previousCell.index + 1
-            
-            if scrollDirection == .Horizontal {
-                cell.col = cell.index / rowCount
-                cell.row = cell.index % rowCount
-                
-            } else {
-                cell.col = cell.index % colCount
-                cell.row = cell.index / colCount
-            }
-            
-            cell.frame = frameForCellInRow(cell.row, col: cell.col)
+            let cell = cellAtIndex(previousCell.index + 1)
             result.append(cell)
         }
         
@@ -160,14 +176,9 @@ class Section {
         return result
     }
     
-    func firstCell() -> Cell {
-        let cell = Cell()
-        cell.frame = frameForCellInRow(cell.row, col: cell.col)
-        return cell
-    }
-
+    // MARK: Privte functions
     
-    func firstCellInRect(rect: CGRect) -> Cell {
+    private func firstCellInRect(rect: CGRect) -> Cell {
         let cell = firstCell()
         
         if scrollDirection == .Horizontal {
@@ -197,28 +208,7 @@ class Section {
         return cell
     }
     
-    func lastCell() -> Cell {
-        
-        let cell = Cell()
-        cell.index = max(itemsCount - 1, 0)
-        
-        if scrollDirection == .Horizontal {
-            if rowCount > 0 {
-                cell.col = cell.index / rowCount
-                cell.row = cell.index % rowCount
-            }
-        } else {
-            if colCount > 0 {
-                cell.col = cell.index % colCount
-                cell.row = cell.index / colCount
-            }
-        }
-        
-        cell.frame = frameForCellInRow(cell.row, col: cell.col)
-        return cell
-    }
-    
-    func lastCellInRect(rect: CGRect) -> Cell {
+    private func lastCellInRect(rect: CGRect) -> Cell {
         
         let cell = lastCell()
         
@@ -251,7 +241,7 @@ class Section {
         return cell
     }
     
-    func frameForCellInRow(row: Int, col: Int) -> CGRect {
+    private func frameForCellInRow(row: Int, col: Int) -> CGRect {
         
         let xAdditionalItemsSpace = scrollDirection == .Horizontal ? minimumLineSpacing : minimumInteritemSpacing
         let yAdditionalItemsSpace = scrollDirection == .Horizontal ? minimumInteritemSpacing : minimumLineSpacing

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 class Cell {
     var col = 0

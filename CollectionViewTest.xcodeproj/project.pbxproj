@@ -18,8 +18,6 @@
 		AAF473111B5FDC8D004504F4 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = AAF4730F1B5FDC8D004504F4 /* LaunchScreen.xib */; };
 		AAF4731D1B5FDC8D004504F4 /* CollectionViewTestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF4731C1B5FDC8D004504F4 /* CollectionViewTestTests.swift */; };
 		AAF473271B5FDCE4004504F4 /* CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF473261B5FDCE4004504F4 /* CollectionViewController.swift */; };
-		AAF4732B1B5FEE02004504F4 /* DateFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = AAF4732A1B5FEE02004504F4 /* DateFlowLayout.m */; };
-		AAFC13101BAC78A6002EFFEE /* HorizontalCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFC130F1BAC78A6002EFFEE /* HorizontalCollectionViewLayout.swift */; };
 		AAFC13121BAD8725002EFFEE /* CollectionFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFC13111BAD8725002EFFEE /* CollectionFlowLayout.swift */; };
 /* End PBXBuildFile section */
 
@@ -49,10 +47,6 @@
 		AAF4731B1B5FDC8D004504F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AAF4731C1B5FDC8D004504F4 /* CollectionViewTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewTestTests.swift; sourceTree = "<group>"; };
 		AAF473261B5FDCE4004504F4 /* CollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewController.swift; sourceTree = "<group>"; };
-		AAF473281B5FEE01004504F4 /* CollectionViewTest-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CollectionViewTest-Bridging-Header.h"; sourceTree = "<group>"; };
-		AAF473291B5FEE02004504F4 /* DateFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateFlowLayout.h; sourceTree = "<group>"; };
-		AAF4732A1B5FEE02004504F4 /* DateFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DateFlowLayout.m; sourceTree = "<group>"; };
-		AAFC130F1BAC78A6002EFFEE /* HorizontalCollectionViewLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HorizontalCollectionViewLayout.swift; sourceTree = "<group>"; };
 		AAFC13111BAD8725002EFFEE /* CollectionFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionFlowLayout.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -113,11 +107,7 @@
 				AAF4730A1B5FDC8D004504F4 /* Main.storyboard */,
 				AAF4730D1B5FDC8D004504F4 /* Images.xcassets */,
 				AAF4730F1B5FDC8D004504F4 /* LaunchScreen.xib */,
-				AAF473291B5FEE02004504F4 /* DateFlowLayout.h */,
-				AAF4732A1B5FEE02004504F4 /* DateFlowLayout.m */,
-				AAFC130F1BAC78A6002EFFEE /* HorizontalCollectionViewLayout.swift */,
 				AAF473051B5FDC8D004504F4 /* CollectionViewTest.xcdatamodeld */,
-				AAF473281B5FEE01004504F4 /* CollectionViewTest-Bridging-Header.h */,
 				AAF473011B5FDC8D004504F4 /* Supporting Files */,
 			);
 			path = CollectionViewTest;
@@ -252,9 +242,7 @@
 			files = (
 				AAF13D251BB0357E002104F2 /* Section.swift in Sources */,
 				AAF473271B5FDCE4004504F4 /* CollectionViewController.swift in Sources */,
-				AAF4732B1B5FEE02004504F4 /* DateFlowLayout.m in Sources */,
 				AAFC13121BAD8725002EFFEE /* CollectionFlowLayout.swift in Sources */,
-				AAFC13101BAC78A6002EFFEE /* HorizontalCollectionViewLayout.swift in Sources */,
 				AA06C55D1BB40683003DC751 /* Utils.swift in Sources */,
 				AAF473091B5FDC8D004504F4 /* ViewController.swift in Sources */,
 				AAF13D231BB03573002104F2 /* Cell.swift in Sources */,
@@ -394,7 +382,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "IPV.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "CollectionViewTest/CollectionViewTest-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -408,7 +396,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "IPV.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "CollectionViewTest/CollectionViewTest-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
 			name = Release;
 		};
