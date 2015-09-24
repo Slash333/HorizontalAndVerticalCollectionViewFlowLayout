@@ -46,10 +46,10 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
         if boundsWidth > boundsHeight {
             scrollDirection = UICollectionViewScrollDirection.Horizontal
         } else {
-            scrollDirection = UICollectionViewScrollDirection.Horizontal
+            scrollDirection = UICollectionViewScrollDirection.Vertical
         }
         
-        sectionInset = UIEdgeInsetsMake(0, 0, 0, 0)
+        sectionInset = UIEdgeInsetsMake(10, 10, 10, 10)
         headerReferenceSize = CGSizeMake(headerWidth, headerHeight)
         itemSize = CGSizeMake(cellWidth, cellHeight)
         
@@ -93,6 +93,10 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
         sectionsInRect = sectionsInRect(rect)
         
         for section in sectionsInRect {
+            
+            if section.itemsCount == 0 {
+                continue
+            }
             
             // header
             let headerIndexPath = NSIndexPath(index: section.index)

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA06C55D1BB40683003DC751 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA06C55C1BB40683003DC751 /* Utils.swift */; settings = {ASSET_TAGS = (); }; };
 		AAF13D231BB03573002104F2 /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF13D221BB03573002104F2 /* Cell.swift */; };
 		AAF13D251BB0357E002104F2 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF13D241BB0357E002104F2 /* Section.swift */; };
 		AAF473041B5FDC8D004504F4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF473031B5FDC8D004504F4 /* AppDelegate.swift */; };
@@ -33,6 +34,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AA06C55C1BB40683003DC751 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		AAF13D221BB03573002104F2 /* Cell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
 		AAF13D241BB0357E002104F2 /* Section.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		AAF472FE1B5FDC8D004504F4 /* CollectionViewTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CollectionViewTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -78,6 +80,7 @@
 				AAFC13111BAD8725002EFFEE /* CollectionFlowLayout.swift */,
 				AAF13D221BB03573002104F2 /* Cell.swift */,
 				AAF13D241BB0357E002104F2 /* Section.swift */,
+				AA06C55C1BB40683003DC751 /* Utils.swift */,
 			);
 			name = CollectionFlowLayout;
 			sourceTree = "<group>";
@@ -252,6 +255,7 @@
 				AAF4732B1B5FEE02004504F4 /* DateFlowLayout.m in Sources */,
 				AAFC13121BAD8725002EFFEE /* CollectionFlowLayout.swift in Sources */,
 				AAFC13101BAC78A6002EFFEE /* HorizontalCollectionViewLayout.swift in Sources */,
+				AA06C55D1BB40683003DC751 /* Utils.swift in Sources */,
 				AAF473091B5FDC8D004504F4 /* ViewController.swift in Sources */,
 				AAF13D231BB03573002104F2 /* Cell.swift in Sources */,
 				AAF473071B5FDC8D004504F4 /* CollectionViewTest.xcdatamodeld in Sources */,
