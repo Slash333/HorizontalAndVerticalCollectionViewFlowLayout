@@ -78,7 +78,7 @@ class Section {
             }
             
             // contentWidth
-            contentWidth = CGFloat(colCount) * (cellWidth + minimumLineSpacing) - (colCount > 0 ? minimumLineSpacing : 0)
+            contentWidth = CGFloat(colCount) * cellWidth + CGFloat(max(colCount - 1, 0)) * minimumLineSpacing
             
             // frame:
             if index == 0 {
@@ -110,7 +110,8 @@ class Section {
             }
             
             // contentHeight
-            contentHeight = CGFloat(rowCount) * (cellHeight + minimumLineSpacing) - (rowCount > 0 ? minimumLineSpacing : 0)
+            
+            contentHeight = CGFloat(rowCount) * cellHeight + CGFloat(max(rowCount - 1, 0)) * minimumLineSpacing
             
             // frame:
             frame.origin.x = 0
