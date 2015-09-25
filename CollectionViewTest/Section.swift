@@ -191,23 +191,19 @@ class Section {
                 let xCount = Int(xWidth / itemFullWidth)
                 initCol = max(initCol + xCount, 0)
                 initCol = min(initCol, colCount - 1)
-                
-                if cell.col != initCol {
-                    cell.col = initCol
-                    cell.index = rowCount * cell.col + cell.row
-                    cell.frame = frameForCellInRow(cell.row, col: cell.col)
-                }
             }
             
             for var col = initCol; col < colCount; ++col {
+                if cell.col != col {
+                    cell.col = col
+                    cell.index = rowCount * cell.col + cell.row
+                    cell.frame = frameForCellInRow(cell.row, col: cell.col)
+                }
+                
                 if CGRectIntersectsRect(rect, cell.frame) ||
                     CGRectContainsRect(rect, cell.frame) {
                     return cell
                 }
-                
-                cell.col = col
-                cell.index = rowCount * cell.col + cell.row
-                cell.frame = frameForCellInRow(cell.row, col: cell.col)
             }
             
         } else {
@@ -220,22 +216,18 @@ class Section {
                 let xCount = Int(xHeight / itemFullHeight)
                 initRow = max(initRow + xCount, 0)
                 initRow = min(initRow, rowCount - 1)
-                
-                if cell.row != initRow {
-                    cell.row = initRow
-                    cell.index = colCount * cell.row + cell.col
-                    cell.frame = frameForCellInRow(cell.row, col: cell.col)
-                }
             }
             
             for var row = initRow; row < rowCount; ++row {
+                if cell.row != row {
+                    cell.row = row
+                    cell.index = colCount * cell.row + cell.col
+                    cell.frame = frameForCellInRow(cell.row, col: cell.col)
+                }
+                
                 if CGRectIntersectsRect(rect, cell.frame) {
                     return cell
                 }
-                
-                cell.row = row
-                cell.index = colCount * cell.row + cell.col
-                cell.frame = frameForCellInRow(cell.row, col: cell.col)
             }
         }
         
@@ -257,25 +249,20 @@ class Section {
                 initCol -= xCount
                 initCol = max(0, initCol)
                 initCol = min(initCol, colCount - 1)
-                
-                if cell.col != initCol {
-                    cell.col = initCol
+            }
+            
+            for var col = initCol; col >= 0; --col {
+                if cell.col != col {
+                    cell.col = col
                     cell.row = max(cell.row, rowCount - 1)
                     cell.index = rowCount * cell.col + cell.row
                     cell.frame = frameForCellInRow(cell.row, col: cell.col)
                 }
-            }
-            
-            for var col = initCol; col >= 0; --col {
+                
                 if CGRectIntersectsRect(rect, cell.frame) ||
                     CGRectContainsRect(rect, cell.frame) {
                     break
                 }
-                
-                cell.col = max(col - 1, 0)
-                cell.row = max(cell.row, rowCount - 1)
-                cell.index = rowCount * cell.col + cell.row
-                cell.frame = frameForCellInRow(cell.row, col: cell.col)
             }
             
         } else {
@@ -289,24 +276,19 @@ class Section {
                 initRow -= xCount
                 initRow = max(initRow, 0)
                 initRow = min(initRow, rowCount - 1)
-                
-                if cell.row != initRow {
-                    cell.row = initRow
+            }
+            
+            for var row = initRow; row >= 0; --row {
+                if cell.row != row {
+                    cell.row = row
                     cell.col = max(cell.col, colCount - 1)
                     cell.index = colCount * cell.row + cell.col
                     cell.frame = frameForCellInRow(cell.row, col: cell.col)
                 }
-            }
-            
-            for var row = initRow; row >= 0; --row {
+                
                 if CGRectIntersectsRect(rect, cell.frame) {
                     break
                 }
-                
-                cell.row = row
-                cell.col = max(cell.col, colCount - 1)
-                cell.index = colCount * cell.row + cell.col
-                cell.frame = frameForCellInRow(cell.row, col: cell.col)
             }
         }
         
