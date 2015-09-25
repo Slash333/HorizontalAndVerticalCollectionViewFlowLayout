@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class Section {
+class VHSection {
     
     // MARK: Private fields
     
@@ -53,7 +53,7 @@ class Section {
         }
     }
     
-    func makeCalculation(collectionFlowLayout: CollectionFlowLayout) {
+    func makeCalculation(collectionFlowLayout: VHCollectionFlowLayout) {
         
         scrollDirection = collectionFlowLayout.scrollDirection
         minimumLineSpacing = collectionFlowLayout.minimumLineSpacing
@@ -68,8 +68,8 @@ class Section {
             contentHeight = collectionFlowLayout.boundsHeight - verticalInsets - headerHeight
             
             // calculate new minimumInteritemSpacing
-            let maxRowCount = Utils.maxItemCountInDimension(contentHeight, minimumInteritemSpacing: minimumInteritemSpacing, itemDimension: cellHeight)
-            let calculatedMinimumInteritemSpacing = Utils.minimumInteritemSpacingInDimension(contentHeight, itemDimension: cellHeight, itemsCount: maxRowCount)
+            let maxRowCount = maxItemCountInDimension(contentHeight, minimumInteritemSpacing: minimumInteritemSpacing, itemDimension: cellHeight)
+            let calculatedMinimumInteritemSpacing = minimumInteritemSpacingInDimension(contentHeight, itemDimension: cellHeight, itemsCount: maxRowCount)
             minimumInteritemSpacing = max(calculatedMinimumInteritemSpacing, minimumInteritemSpacing)
 
             // rowCount
@@ -100,8 +100,8 @@ class Section {
             contentWidth = collectionFlowLayout.boundsWidth - horizontalInsets
             
             // calculate new minimumInteritemSpacing
-            let maxColCount = Utils.maxItemCountInDimension(contentWidth, minimumInteritemSpacing: minimumInteritemSpacing, itemDimension: cellWidth)
-            let calculatedMinimumInteritemSpacing = Utils.minimumInteritemSpacingInDimension(contentWidth, itemDimension: cellWidth, itemsCount: maxColCount)
+            let maxColCount = maxItemCountInDimension(contentWidth, minimumInteritemSpacing: minimumInteritemSpacing, itemDimension: cellWidth)
+            let calculatedMinimumInteritemSpacing = minimumInteritemSpacingInDimension(contentWidth, itemDimension: cellWidth, itemsCount: maxColCount)
             minimumInteritemSpacing = max(calculatedMinimumInteritemSpacing, minimumInteritemSpacing)
             
             // colCount
@@ -131,8 +131,8 @@ class Section {
         }
     }
     
-    func cellAtIndex(index: Int) -> Cell {
-        let cell = Cell()
+    func cellAtIndex(index: Int) -> VHCell {
+        let cell = VHCell()
         cell.index = index
         
         if scrollDirection == .Horizontal {
@@ -149,16 +149,16 @@ class Section {
         return cell
     }
     
-    func firstCell() -> Cell {
+    func firstCell() -> VHCell {
         return cellAtIndex(0)
     }
     
-    func lastCell() -> Cell {
+    func lastCell() -> VHCell {
         return cellAtIndex(max(itemsCount - 1, 0))
     }
     
-    func cellsInRect(rect: CGRect) -> [Cell] {
-        var result: Array<Cell> = Array()
+    func cellsInRect(rect: CGRect) -> [VHCell] {
+        var result: Array<VHCell> = Array()
         
         let firstCell = firstCellInRect(rect)
         let lastCell = lastCellInRect(rect)
@@ -178,7 +178,7 @@ class Section {
     
     // MARK: Privte functions
     
-    private func firstCellInRect(rect: CGRect) -> Cell {
+    private func firstCellInRect(rect: CGRect) -> VHCell {
         let cell = firstCell()
         
         if scrollDirection == .Horizontal {
@@ -234,7 +234,7 @@ class Section {
         return cell
     }
     
-    private func lastCellInRect(rect: CGRect) -> Cell {
+    private func lastCellInRect(rect: CGRect) -> VHCell {
         
         let cell = lastCell()
         
@@ -310,5 +310,43 @@ class Section {
             CGFloat(row) * (cellHeight + yAdditionalItemsSpace)
         
         return CGRectMake(x, y, cellWidth, cellHeight)
+    }
+    
+    // MARK: helpers
+    
+    private func maxItemCountInDimension(dimension: CGFloat, minimumInteritemSpacing: CGFloat, itemDimension: CGFloat) -> Int {
+        
+        var result = 0
+        
+        if dimension <= 0 || itemDimension <= 0 || itemDimension > dimension{
+            return result
+        }
+        
+        result = Int(dimension / itemDimension)
+        
+        if result == 1 {
+            return result
+        }
+        
+        // items count is greater than one or equal to one (result >= 1)
+        
+        result = Int(dimension + minimumInteritemSpacing) / Int(itemDimension + minimumInteritemSpacing)
+        
+        return result
+    }
+    
+    private func minimumInteritemSpacingInDimension(dimension: CGFloat, itemDimension: CGFloat, itemsCount: Int) -> CGFloat {
+        var result: CGFloat = 0
+        
+        if dimension <= 0 || itemDimension <= 0 || itemDimension > dimension{
+            return result
+        }
+        
+        if itemsCount > 1 {
+            let itemsDimension = CGFloat(itemsCount) * itemDimension
+            result = (dimension - itemsDimension) / CGFloat(itemsCount - 1)
+        }
+        
+        return result
     }
 }

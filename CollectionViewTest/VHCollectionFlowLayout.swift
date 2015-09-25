@@ -9,17 +9,17 @@
 import Foundation
 import UIKit
 
-class CollectionFlowLayout: UICollectionViewFlowLayout {
+class VHCollectionFlowLayout: UICollectionViewFlowLayout {
     
     // MARK: constants
     
-    let cellHeight = CGFloat(40)
-    let cellWidth = CGFloat(40)
-    let headerHeight = CGFloat(40)
-    let headerWidth = CGFloat(40)
+    let cellHeight = CGFloat(70)
+    let cellWidth = CGFloat(70)
+    let headerHeight = CGFloat(70)
+    let headerWidth = CGFloat(70)
     
-    var sections: Array<Section> = Array()
-    var sectionsInRect: Array<Section> = Array()
+    var sections: Array<VHSection> = Array()
+    var sectionsInRect: Array<VHSection> = Array()
     
     // MARK: Properties
     
@@ -60,7 +60,7 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
         sections.removeAll(keepCapacity: true)
         
         for var i = 0; i < collectionView!.numberOfSections(); ++i {
-            let section = Section()
+            let section = VHSection()
             section.index = i
             section.itemsCount = collectionView!.numberOfItemsInSection(i)
             sections.append(section)
@@ -194,8 +194,8 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
     
     // MARK: Private functions
     
-    private func sectionsInRect(rect: CGRect) -> [Section] {
-        var result: Array<Section> = Array()
+    private func sectionsInRect(rect: CGRect) -> [VHSection] {
+        var result: Array<VHSection> = Array()
         
         for section in sections {
             if CGRectIntersectsRect(rect, section.frame) {

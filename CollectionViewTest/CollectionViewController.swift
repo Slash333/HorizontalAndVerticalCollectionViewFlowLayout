@@ -29,19 +29,8 @@ class CollectionViewController: UICollectionViewController {
         // Register cell classes
         self.collectionView!.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         self.collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind:UICollectionElementKindSectionHeader , withReuseIdentifier: reuseHeaderIdentifier)
-
-        // Do any additional setup after loading the view.
-        //self.collectionView?.alwaysBounceVertical = false
         
-        collectionView?.collectionViewLayout = CollectionFlowLayout()
-//        var fl = UICollectionViewFlowLayout()
-//        fl.itemSize = CGSizeMake(70, 70)
-//        fl.headerReferenceSize = CGSizeMake(70, 70)
-//        fl.minimumInteritemSpacing = 0
-//        
-//        fl.minimumLineSpacing = 20
-//        collectionView?.collectionViewLayout = fl
-
+        collectionView?.collectionViewLayout = VHCollectionFlowLayout()
         collectionView?.collectionViewLayout.invalidateLayout()
     }
     
@@ -49,13 +38,13 @@ class CollectionViewController: UICollectionViewController {
 
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         //#warning Incomplete method implementation -- Return the number of sections
-        return 50
+        return 20
     }
 
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         //#warning Incomplete method implementation -- Return the number of items in the section
-        return 200
+        return 100
     }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {

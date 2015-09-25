@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class Cell {
+class VHCell {
     var col = 0
     var row = 0
     var index = 0
