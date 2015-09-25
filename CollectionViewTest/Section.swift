@@ -183,8 +183,25 @@ class Section {
         
         if scrollDirection == .Horizontal {
             
-            for var col = 0; col < colCount; ++col {
-                if CGRectIntersectsRect(rect, cell.frame) {
+            var initCol = 0
+            let xWidth = CGRectGetMinX(rect) - CGRectGetMinX(frame) + sectionInset.left
+            let itemFullWidth = cellWidth + minimumLineSpacing
+            
+            if xWidth > itemFullWidth && itemFullWidth > 0 {
+                let xCount = Int(xWidth / itemFullWidth)
+                initCol = max(initCol + xCount, 0)
+                initCol = min(initCol, colCount - 1)
+                
+                if cell.col != initCol {
+                    cell.col = initCol
+                    cell.index = rowCount * cell.col + cell.row
+                    cell.frame = frameForCellInRow(cell.row, col: cell.col)
+                }
+            }
+            
+            for var col = initCol; col < colCount; ++col {
+                if CGRectIntersectsRect(rect, cell.frame) ||
+                    CGRectContainsRect(rect, cell.frame) {
                     return cell
                 }
                 
@@ -194,7 +211,24 @@ class Section {
             }
             
         } else {
-            for var row = 0; row < rowCount; ++row {
+            
+            var initRow = 0
+            let xHeight = CGRectGetMinY(rect) - CGRectGetMinY(frame) + sectionInset.top
+            let itemFullHeight = cellHeight + minimumLineSpacing
+            
+            if xHeight > itemFullHeight && itemFullHeight > 0 {
+                let xCount = Int(xHeight / itemFullHeight)
+                initRow = max(initRow + xCount, 0)
+                initRow = min(initRow, rowCount - 1)
+                
+                if cell.row != initRow {
+                    cell.row = initRow
+                    cell.index = colCount * cell.row + cell.col
+                    cell.frame = frameForCellInRow(cell.row, col: cell.col)
+                }
+            }
+            
+            for var row = initRow; row < rowCount; ++row {
                 if CGRectIntersectsRect(rect, cell.frame) {
                     return cell
                 }
@@ -213,9 +247,28 @@ class Section {
         let cell = lastCell()
         
         if scrollDirection == .Horizontal {
+            var initCol = colCount - 1
             
-            for var col = colCount - 1; col >= 0; --col {
-                if CGRectIntersectsRect(rect, cell.frame) {
+            let xWidth = CGRectGetMaxX(frame) - CGRectGetMaxX(rect) - sectionInset.right
+            let itemFullWidth = cellWidth + minimumLineSpacing
+            
+            if xWidth > itemFullWidth && itemFullWidth > 0 {
+                let xCount = Int(xWidth / itemFullWidth)
+                initCol -= xCount
+                initCol = max(0, initCol)
+                initCol = min(initCol, colCount - 1)
+                
+                if cell.col != initCol {
+                    cell.col = initCol
+                    cell.row = max(cell.row, rowCount - 1)
+                    cell.index = rowCount * cell.col + cell.row
+                    cell.frame = frameForCellInRow(cell.row, col: cell.col)
+                }
+            }
+            
+            for var col = initCol; col >= 0; --col {
+                if CGRectIntersectsRect(rect, cell.frame) ||
+                    CGRectContainsRect(rect, cell.frame) {
                     break
                 }
                 
@@ -226,7 +279,26 @@ class Section {
             }
             
         } else {
-            for var row = rowCount - 1; row >= 0; --row {
+            
+            var initRow = rowCount - 1
+            let xHeight = CGRectGetMaxY(frame) - CGRectGetMaxY(rect) - sectionInset.bottom
+            let itemFullHeight = cellHeight + minimumLineSpacing
+            
+            if xHeight > itemFullHeight && itemFullHeight > 0 {
+                let xCount = Int(xHeight / itemFullHeight)
+                initRow -= xCount
+                initRow = max(initRow, 0)
+                initRow = min(initRow, rowCount - 1)
+                
+                if cell.row != initRow {
+                    cell.row = initRow
+                    cell.col = max(cell.col, colCount - 1)
+                    cell.index = colCount * cell.row + cell.col
+                    cell.frame = frameForCellInRow(cell.row, col: cell.col)
+                }
+            }
+            
+            for var row = initRow; row >= 0; --row {
                 if CGRectIntersectsRect(rect, cell.frame) {
                     break
                 }

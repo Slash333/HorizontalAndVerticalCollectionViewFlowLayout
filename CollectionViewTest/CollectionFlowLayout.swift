@@ -13,10 +13,10 @@ class CollectionFlowLayout: UICollectionViewFlowLayout {
     
     // MARK: constants
     
-    let cellHeight = CGFloat(70)
-    let cellWidth = CGFloat(70)
-    let headerHeight = CGFloat(70)
-    let headerWidth = CGFloat(70)
+    let cellHeight = CGFloat(40)
+    let cellWidth = CGFloat(40)
+    let headerHeight = CGFloat(40)
+    let headerWidth = CGFloat(40)
     
     var sections: Array<Section> = Array()
     var sectionsInRect: Array<Section> = Array()
