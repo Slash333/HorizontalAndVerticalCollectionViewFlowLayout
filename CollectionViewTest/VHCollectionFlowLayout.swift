@@ -39,6 +39,30 @@ class VHCollectionFlowLayout: UICollectionViewFlowLayout {
         return self.collectionView!.contentOffset.y
     }
     
+    var horizontalContentInset: CGFloat {
+        return leftContentInset + rightContentInset
+    }
+    
+    var verticalContentInset: CGFloat {
+        return topContentInset + bottomContentInset
+    }
+    
+    var leftContentInset: CGFloat {
+        return self.collectionView!.contentInset.left
+    }
+    
+    var topContentInset: CGFloat {
+        return self.collectionView!.contentInset.top
+    }
+    
+    var rightContentInset: CGFloat {
+        return self.collectionView!.contentInset.right
+    }
+    
+    var bottomContentInset: CGFloat {
+        return self.collectionView!.contentInset.bottom
+    }
+    
     // MARK: Overrides
     
     override func prepareLayout() {
@@ -49,6 +73,8 @@ class VHCollectionFlowLayout: UICollectionViewFlowLayout {
         } else {
             scrollDirection = UICollectionViewScrollDirection.Vertical
         }
+        
+        collectionView!.contentInset = UIEdgeInsetsMake(20, 20, 20, 20)
         
         sectionInset = UIEdgeInsetsMake(10, 10, 10, 10)
         headerReferenceSize = CGSizeMake(headerWidth, headerHeight)
@@ -70,21 +96,20 @@ class VHCollectionFlowLayout: UICollectionViewFlowLayout {
     }
     
     override func collectionViewContentSize() -> CGSize {
+        var width: CGFloat = 0
+        var height: CGFloat = 0
         if scrollDirection == .Horizontal {
-            var width: CGFloat = 0
             for section in sections {
                 width += section.frame.width
+                height = max(section.frame.height, height)
             }
-            
-            return CGSizeMake(width, collectionView!.bounds.height)
         } else {
-            var height: CGFloat = 0
             for section in sections {
+                width = max(section.frame.width, width)
                 height += section.frame.height
             }
-            
-            return CGSizeMake(collectionView!.bounds.width, height)
         }
+        return CGSizeMake(width, height)
     }
     
     override func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
@@ -164,24 +189,25 @@ class VHCollectionFlowLayout: UICollectionViewFlowLayout {
         let lastCell = section.lastCell()
         
         if scrollDirection == .Horizontal {
-            let xOffset = xContentOffset
+            
             let leftByFirstItem = CGRectGetMinX(firstCell.frame) - sectionInset.left
             let rightByLastItem = CGRectGetMaxX(lastCell.frame) + sectionInset.right
             
-            let width = min(rightByLastItem - leftByFirstItem, boundsWidth)
-            let left = max(xOffset, leftByFirstItem) - max(xOffset + width - rightByLastItem, 0)
+            let width = min(rightByLastItem - leftByFirstItem, boundsWidth - horizontalContentInset)
+            let left = max(xContentOffset + leftContentInset, leftByFirstItem) - max(xContentOffset + leftContentInset + width - rightByLastItem, 0)
             
             layoutAttribute.frame = CGRectMake(left, 0, width, headerHeight)
             layoutAttribute.zIndex = 1024
             
         } else { // Vertical
-            let yOffset = yContentOffset
+            
             let topByFirstItem = CGRectGetMinY(firstCell.frame) - sectionInset.top - headerHeight
             let bottomByLastItem = CGRectGetMaxY(lastCell.frame) + sectionInset.bottom
             
-            let top = max(yOffset, topByFirstItem) - max(yOffset + headerHeight - bottomByLastItem, 0)
+            let width = boundsWidth - horizontalContentInset
+            let top = max(yContentOffset + topContentInset, topByFirstItem) - max(yContentOffset + topContentInset + headerHeight - bottomByLastItem, 0)
             
-            layoutAttribute.frame = CGRectMake(0, top, boundsWidth, headerHeight)
+            layoutAttribute.frame = CGRectMake(0, top, width, headerHeight)
             layoutAttribute.zIndex = 1024
         }
         

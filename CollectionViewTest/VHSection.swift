@@ -18,6 +18,7 @@ class VHSection {
     
     private (set) var frame = CGRectMake(0, 0, 0, 0)
     private (set) var sectionInset = UIEdgeInsetsMake(0, 0, 0, 0)
+    private (set) var contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
     
     private (set) var contentHeight: CGFloat = 0
     private (set) var contentWidth: CGFloat = 0
@@ -37,7 +38,7 @@ class VHSection {
     var index = 0
     var itemsCount = 0
     
-    var verticalInsets: CGFloat {
+    var verticalSectionInsets: CGFloat {
         if itemsCount > 0 {
             return sectionInset.top + sectionInset.bottom
         } else {
@@ -45,9 +46,25 @@ class VHSection {
         }
     }
     
-    var horizontalInsets: CGFloat {
+    var horizontalSectionInsets: CGFloat {
         if itemsCount > 0 {
             return sectionInset.left + sectionInset.right
+        } else {
+            return CGFloat(0)
+        }
+    }
+    
+    var verticalContentInsets: CGFloat {
+        if itemsCount > 0 {
+            return contentInset.top + contentInset.bottom
+        } else {
+            return CGFloat(0)
+        }
+    }
+    
+    var horizontalContentInsets: CGFloat {
+        if itemsCount > 0 {
+            return contentInset.left + contentInset.right
         } else {
             return CGFloat(0)
         }
@@ -63,9 +80,13 @@ class VHSection {
         cellHeight = collectionFlowLayout.cellHeight
         cellWidth = collectionFlowLayout.cellWidth
         
+        if collectionFlowLayout.collectionView != nil {
+            contentInset = collectionFlowLayout.collectionView!.contentInset
+        }
+        
         if scrollDirection == .Horizontal {
             // contentHeight
-            contentHeight = collectionFlowLayout.boundsHeight - verticalInsets - headerHeight
+            contentHeight = collectionFlowLayout.boundsHeight - verticalSectionInsets - verticalContentInsets - headerHeight
             
             // calculate new minimumInteritemSpacing
             let maxRowCount = maxItemCountInDimension(contentHeight, minimumInteritemSpacing: minimumInteritemSpacing, itemDimension: cellHeight)
@@ -92,12 +113,12 @@ class VHSection {
             }
             
             frame.origin.y = 0
-            frame.size.height = collectionFlowLayout.boundsHeight
-            frame.size.width = contentWidth + horizontalInsets
+            frame.size.height = collectionFlowLayout.boundsHeight - verticalContentInsets
+            frame.size.width = contentWidth + horizontalSectionInsets
             
         } else {
             // contentWidth
-            contentWidth = collectionFlowLayout.boundsWidth - horizontalInsets
+            contentWidth = collectionFlowLayout.boundsWidth - horizontalSectionInsets - horizontalContentInsets
             
             // calculate new minimumInteritemSpacing
             let maxColCount = maxItemCountInDimension(contentWidth, minimumInteritemSpacing: minimumInteritemSpacing, itemDimension: cellWidth)
@@ -126,8 +147,8 @@ class VHSection {
                 frame.origin.y  = CGRectGetMaxY(previousSection.frame)
             }
             
-            frame.size.height = contentHeight + verticalInsets + (itemsCount > 0 ? headerHeight : 0)
-            frame.size.width = collectionFlowLayout.boundsWidth
+            frame.size.height = contentHeight + verticalSectionInsets + (itemsCount > 0 ? headerHeight : 0)
+            frame.size.width = collectionFlowLayout.boundsWidth - horizontalContentInsets
         }
     }
     
@@ -136,12 +157,15 @@ class VHSection {
         cell.index = index
         
         if scrollDirection == .Horizontal {
-            cell.col = cell.index / rowCount
-            cell.row = cell.index % rowCount
-            
+            if rowCount > 0 {
+                cell.col = cell.index / rowCount
+                cell.row = cell.index % rowCount
+            }
         } else {
-            cell.col = cell.index % colCount
-            cell.row = cell.index / colCount
+            if colCount > 0 {
+                cell.col = cell.index % colCount
+                cell.row = cell.index / colCount
+            }
         }
         
         cell.frame = frameForCellInRow(cell.row, col: cell.col)
@@ -209,7 +233,7 @@ class VHSection {
         } else {
             
             var initRow = 0
-            let xHeight = CGRectGetMinY(rect) - CGRectGetMinY(frame) + sectionInset.top
+            let xHeight = CGRectGetMinY(rect) - CGRectGetMinY(frame) + sectionInset.top - contentInset.top
             let itemFullHeight = cellHeight + minimumLineSpacing
             
             if xHeight > itemFullHeight && itemFullHeight > 0 {
