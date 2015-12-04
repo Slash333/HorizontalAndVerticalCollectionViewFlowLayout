@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AAE770821C11C10800675275 /* VHDecorationViewHorizontal.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAE770811C11C10800675275 /* VHDecorationViewHorizontal.swift */; };
+		AAE770841C11E7EF00675275 /* VHDecorationViewVertical.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAE770831C11E7EF00675275 /* VHDecorationViewVertical.swift */; };
+		AAE770861C11EE2000675275 /* VHDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAE770851C11EE2000675275 /* VHDecorationView.swift */; };
 		AAF13D231BB03573002104F2 /* VHCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF13D221BB03573002104F2 /* VHCell.swift */; };
 		AAF13D251BB0357E002104F2 /* VHSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF13D241BB0357E002104F2 /* VHSection.swift */; };
 		AAF473041B5FDC8D004504F4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF473031B5FDC8D004504F4 /* AppDelegate.swift */; };
@@ -20,6 +23,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		AAE770811C11C10800675275 /* VHDecorationViewHorizontal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VHDecorationViewHorizontal.swift; sourceTree = "<group>"; };
+		AAE770831C11E7EF00675275 /* VHDecorationViewVertical.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VHDecorationViewVertical.swift; sourceTree = "<group>"; };
+		AAE770851C11EE2000675275 /* VHDecorationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VHDecorationView.swift; sourceTree = "<group>"; };
 		AAF13D221BB03573002104F2 /* VHCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VHCell.swift; sourceTree = "<group>"; };
 		AAF13D241BB0357E002104F2 /* VHSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VHSection.swift; sourceTree = "<group>"; };
 		AAF472FE1B5FDC8D004504F4 /* CollectionViewTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CollectionViewTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -51,6 +57,9 @@
 				AAFC13111BAD8725002EFFEE /* VHCollectionFlowLayout.swift */,
 				AAF13D221BB03573002104F2 /* VHCell.swift */,
 				AAF13D241BB0357E002104F2 /* VHSection.swift */,
+				AAE770811C11C10800675275 /* VHDecorationViewHorizontal.swift */,
+				AAE770831C11E7EF00675275 /* VHDecorationViewVertical.swift */,
+				AAE770851C11EE2000675275 /* VHDecorationView.swift */,
 			);
 			name = VHCollectionFlowLayout;
 			sourceTree = "<group>";
@@ -169,9 +178,12 @@
 			files = (
 				AAF13D251BB0357E002104F2 /* VHSection.swift in Sources */,
 				AAF473271B5FDCE4004504F4 /* CollectionViewController.swift in Sources */,
+				AAE770821C11C10800675275 /* VHDecorationViewHorizontal.swift in Sources */,
 				AAFC13121BAD8725002EFFEE /* VHCollectionFlowLayout.swift in Sources */,
+				AAE770861C11EE2000675275 /* VHDecorationView.swift in Sources */,
 				AAF473091B5FDC8D004504F4 /* ViewController.swift in Sources */,
 				AAF13D231BB03573002104F2 /* VHCell.swift in Sources */,
+				AAE770841C11E7EF00675275 /* VHDecorationViewVertical.swift in Sources */,
 				AAF473071B5FDC8D004504F4 /* CollectionViewTest.xcdatamodeld in Sources */,
 				AAF473041B5FDC8D004504F4 /* AppDelegate.swift in Sources */,
 			);

@@ -13,6 +13,9 @@ class VHSection {
     
     // MARK: Private fields
     
+    var bottomInset = CGFloat(0)
+    var leftInset = CGFloat(0)
+    
     private (set) var rowCount = 0
     private (set) var colCount = 0
     
@@ -104,17 +107,51 @@ class VHSection {
             // contentWidth
             contentWidth = CGFloat(colCount) * cellWidth + CGFloat(max(colCount - 1, 0)) * minimumLineSpacing
             
+            if let collectionView = collectionFlowLayout.collectionView {
+                if let delegate = collectionView.delegate as? UICollectionViewDelegateFlowLayout {
+                    if let headerSize = delegate.collectionView?(collectionView, layout: collectionFlowLayout, referenceSizeForHeaderInSection: index) {
+                        if contentWidth < headerSize.width {
+                            contentWidth = headerSize.width
+                        }
+                    }
+                }
+            }
+            
             // frame:
-            if index == 0 {
-                frame.origin.x = 0
+            if (collectionFlowLayout.isFirstSectionAlwaysVisible) {
+                
+                if index == 0 {
+                    frame.origin.x = collectionFlowLayout.xContentOffset + contentInset.left
+                } else {
+                    let previousSection = collectionFlowLayout.sections[index - 1]
+                    if index == 1 {
+                        frame.origin.x  = CGRectGetMaxX(previousSection.frame) - collectionFlowLayout.xContentOffset - contentInset.left
+                    } else {
+                        frame.origin.x  = CGRectGetMaxX(previousSection.frame)
+                    }
+                }
+                
             } else {
-                let previousSection = collectionFlowLayout.sections[index - 1]
-                frame.origin.x  = CGRectGetMaxX(previousSection.frame)
+                
+                if index == 0 {
+                    frame.origin.x = 0
+                } else {
+                    let previousSection = collectionFlowLayout.sections[index - 1]
+                    frame.origin.x  = CGRectGetMaxX(previousSection.frame)
+                }
+                
             }
             
             frame.origin.y = 0
             frame.size.height = collectionFlowLayout.boundsHeight - verticalContentInsets
             frame.size.width = contentWidth + horizontalSectionInsets
+            
+            leftInset = 0
+            
+            if collectionFlowLayout.isFirstSectionAlwaysVisible && index == 0 {
+                leftInset = collectionFlowLayout.decorateViewWidth()
+                frame.size.width += leftInset
+            }
             
         } else {
             // contentWidth
@@ -140,14 +177,39 @@ class VHSection {
             // frame:
             frame.origin.x = 0
             
-            if index == 0 {
-                frame.origin.y = 0
+            
+            if (collectionFlowLayout.isFirstSectionAlwaysVisible) {
+                
+                if index == 0 {
+                    frame.origin.y = collectionFlowLayout.yContentOffset + contentInset.top
+                } else {
+                    let previousSection = collectionFlowLayout.sections[index - 1]
+                    if index == 1 {
+                        frame.origin.y  = CGRectGetMaxY(previousSection.frame) - collectionFlowLayout.yContentOffset - contentInset.top
+                    } else {
+                        frame.origin.y  = CGRectGetMaxY(previousSection.frame)
+                    }
+                }
+                
             } else {
-                let previousSection = collectionFlowLayout.sections[index - 1]
-                frame.origin.y  = CGRectGetMaxY(previousSection.frame)
+                
+                if index == 0 {
+                    frame.origin.y = CGFloat(0)
+                } else {
+                    let previousSection = collectionFlowLayout.sections[index - 1]
+                    frame.origin.y  = CGRectGetMaxY(previousSection.frame)
+                }
+                
             }
             
             frame.size.height = contentHeight + verticalSectionInsets + (itemsCount > 0 ? headerHeight : 0)
+            bottomInset = 0
+
+            if collectionFlowLayout.isFirstSectionAlwaysVisible && index == 0 {
+                bottomInset = collectionFlowLayout.decorateViewWidth()
+                frame.size.height += bottomInset
+            }
+            
             frame.size.width = collectionFlowLayout.boundsWidth - horizontalContentInsets
         }
     }
@@ -258,6 +320,10 @@ class VHSection {
         return cell
     }
     
+    
+//    private sectionContentWidth() -> CGFloat {
+//    }
+    
     private func lastCellInRect(rect: CGRect) -> VHCell {
         
         let cell = lastCell()
@@ -324,8 +390,16 @@ class VHSection {
         let xAdditionalItemsSpace = scrollDirection == .Horizontal ? minimumLineSpacing : minimumInteritemSpacing
         let yAdditionalItemsSpace = scrollDirection == .Horizontal ? minimumInteritemSpacing : minimumLineSpacing
         
+        contentWidth = CGFloat(colCount) * cellWidth + CGFloat(max(colCount - 1, 0)) * xAdditionalItemsSpace
+        
+        let sectionContentWidth = frame.size.width - sectionInset.left - sectionInset.right - leftInset
+        
+        // if header width > than content width
+        // with offset we will align content on center horizontally
+        let offset = (contentWidth < sectionContentWidth) ? (sectionContentWidth - contentWidth) / 2 : CGFloat(0)
+        
         let x = frame.origin.x +
-            sectionInset.left +
+            (offset == 0 ? sectionInset.left : offset) +
             CGFloat(col) * (cellWidth + xAdditionalItemsSpace )
         
         let y = frame.origin.y +

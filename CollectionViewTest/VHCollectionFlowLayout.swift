@@ -11,6 +11,8 @@ import UIKit
 
 class VHCollectionFlowLayout: UICollectionViewFlowLayout {
     
+    var isFirstSectionAlwaysVisible = true
+    
     // MARK: constants
     
     let cellHeight = CGFloat(70)
@@ -74,7 +76,7 @@ class VHCollectionFlowLayout: UICollectionViewFlowLayout {
             scrollDirection = UICollectionViewScrollDirection.Vertical
         }
         
-        collectionView!.contentInset = UIEdgeInsetsMake(20, 20, 20, 20)
+        collectionView!.contentInset = UIEdgeInsetsMake(10, 10, 10, 10)
         
         sectionInset = UIEdgeInsetsMake(10, 10, 10, 10)
         headerReferenceSize = CGSizeMake(headerWidth, headerHeight)
@@ -124,7 +126,20 @@ class VHCollectionFlowLayout: UICollectionViewFlowLayout {
                 continue
             }
             
-            // header
+            // add decoration view
+            if isFirstSectionAlwaysVisible {
+                if section.index == 0 {
+                    let decorationViewIndexPath = NSIndexPath(index: section.index)
+                    let decorationViewKind = scrollDirection == .Horizontal ? "VHDecorationViewHorizontal" : "VHDecorationViewVertical"
+                    let decorationView = layoutAttributesForDecorationViewOfKind(decorationViewKind, atIndexPath: decorationViewIndexPath)
+                    
+                    if decorationView != nil {
+                        result.append(decorationView!)
+                    }
+                }
+            }
+            
+            // add header view
             let headerIndexPath = NSIndexPath(index: section.index)
             let  headerLayoutAttribute = layoutAttributesForSupplementaryViewOfKind(UICollectionElementKindSectionHeader, atIndexPath: headerIndexPath)
             
@@ -134,7 +149,7 @@ class VHCollectionFlowLayout: UICollectionViewFlowLayout {
             
             result.append(headerLayoutAttribute!)
             
-            // cells
+            // add cells cells
             let cells = section.cellsInRect(rect)
             
             for cell in cells {
@@ -169,6 +184,12 @@ class VHCollectionFlowLayout: UICollectionViewFlowLayout {
         let cell = section.cellAtIndex(indexPath.row)
         layoutAttribute.frame = cell.frame
         
+        if section.index == 0 {
+            layoutAttribute.zIndex = 7
+        } else {
+            layoutAttribute.zIndex = 1
+        }
+        
         return layoutAttribute
     }
     
@@ -190,14 +211,34 @@ class VHCollectionFlowLayout: UICollectionViewFlowLayout {
         
         if scrollDirection == .Horizontal {
             
-            let leftByFirstItem = CGRectGetMinX(firstCell.frame) - sectionInset.left
-            let rightByLastItem = CGRectGetMaxX(lastCell.frame) + sectionInset.right
+            let leftByFirstItem = section.frame.origin.x
+            var rightByLastItem = CGRectGetMaxX(lastCell.frame) + sectionInset.right
             
-            let width = min(rightByLastItem - leftByFirstItem, boundsWidth - horizontalContentInset)
-            let left = max(xContentOffset + leftContentInset, leftByFirstItem) - max(xContentOffset + leftContentInset + width - rightByLastItem, 0)
+            if let collectionView = self.collectionView {
+                if let delegate = collectionView.delegate as? UICollectionViewDelegateFlowLayout {
+                    if let headerSize = delegate.collectionView?(collectionView, layout: self, referenceSizeForHeaderInSection: indexPath.section) {
+                        if (rightByLastItem - leftByFirstItem) < headerSize.width {
+                            rightByLastItem = headerSize.width + leftByFirstItem
+                        }
+                    }
+                }
+            }
+            
+            var width = min(rightByLastItem - leftByFirstItem, boundsWidth - horizontalContentInset)
+            
+            var leftEdge = xContentOffset + leftContentInset
+            
+            if isFirstSectionAlwaysVisible {
+                if section.index > 0 {
+                    let firstSection = sections[0]
+                    leftEdge += firstSection.frame.width
+                    width -= firstSection.frame.width
+                }
+            }
+            
+            let left = max(leftEdge, leftByFirstItem) - max(leftEdge + width - rightByLastItem, 0)
             
             layoutAttribute.frame = CGRectMake(left, 0, width, headerHeight)
-            layoutAttribute.zIndex = 1024
             
         } else { // Vertical
             
@@ -205,10 +246,38 @@ class VHCollectionFlowLayout: UICollectionViewFlowLayout {
             let bottomByLastItem = CGRectGetMaxY(lastCell.frame) + sectionInset.bottom
             
             let width = boundsWidth - horizontalContentInset
-            let top = max(yContentOffset + topContentInset, topByFirstItem) - max(yContentOffset + topContentInset + headerHeight - bottomByLastItem, 0)
+            
+            
+            var topEdge = yContentOffset + topContentInset
+            
+            if isFirstSectionAlwaysVisible {
+                if section.index > 0 {
+                    let firstSection = sections[0]
+                    topEdge += firstSection.frame.height
+                }
+            }
+            
+            let top = max(topEdge, topByFirstItem) - max(topEdge + headerHeight - bottomByLastItem, 0)
             
             layoutAttribute.frame = CGRectMake(0, top, width, headerHeight)
-            layoutAttribute.zIndex = 1024
+        }
+        
+        if section.index == 0 {
+            layoutAttribute.zIndex = 10
+        } else {
+            layoutAttribute.zIndex = 5
+        }
+        
+        return layoutAttribute
+    }
+    
+    override func layoutAttributesForDecorationViewOfKind(elementKind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
+        let layoutAttribute = UICollectionViewLayoutAttributes(forDecorationViewOfKind: elementKind, withIndexPath: indexPath)
+        
+        if isFirstSectionAlwaysVisible {
+            let firstSection = sections[0]
+            layoutAttribute.frame = firstSection.frame
+            layoutAttribute.zIndex = 6
         }
         
         return layoutAttribute
@@ -216,6 +285,16 @@ class VHCollectionFlowLayout: UICollectionViewFlowLayout {
     
     override func shouldInvalidateLayoutForBoundsChange(newBounds: CGRect) -> Bool {
         return true
+    }
+    
+    // MARK: - Helpers
+    
+    func decorateViewWidth() -> CGFloat {
+        if isFirstSectionAlwaysVisible {
+            return VHDecorationView.borderWidth
+        }
+    
+        return CGFloat(0)
     }
     
     // MARK: Private functions

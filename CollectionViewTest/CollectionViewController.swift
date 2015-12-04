@@ -11,7 +11,7 @@ import UIKit
 let reuseIdentifier = "Cell"
 let reuseHeaderIdentifier = "Header"
 
-class CollectionViewController: UICollectionViewController {
+class CollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
 
     
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
@@ -30,7 +30,12 @@ class CollectionViewController: UICollectionViewController {
         self.collectionView!.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         self.collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind:UICollectionElementKindSectionHeader , withReuseIdentifier: reuseHeaderIdentifier)
         
+        collectionView?.delegate = self
         collectionView?.collectionViewLayout = VHCollectionFlowLayout()
+        
+        collectionView!.collectionViewLayout.registerClass(VHDecorationViewHorizontal.self, forDecorationViewOfKind: "VHDecorationViewHorizontal")
+        collectionView!.collectionViewLayout.registerClass(VHDecorationViewVertical.self, forDecorationViewOfKind: "VHDecorationViewVertical")
+        
         collectionView?.collectionViewLayout.invalidateLayout()
     }
     
@@ -38,12 +43,15 @@ class CollectionViewController: UICollectionViewController {
 
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         //#warning Incomplete method implementation -- Return the number of sections
-        return 20
+        return 3
     }
 
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         //#warning Incomplete method implementation -- Return the number of items in the section
+        if section == 0 {
+            return 6
+        }
         return 50
     }
 
@@ -86,4 +94,10 @@ class CollectionViewController: UICollectionViewController {
         
         return header
     }
+    
+//    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+//        let size = CGSizeMake(550, 250)
+//        
+//        return size
+//    }
 }
